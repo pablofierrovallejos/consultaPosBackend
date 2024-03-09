@@ -1,0 +1,63 @@
+version: '3.7'
+services:
+  servicio-eureka-server:
+    image: 96552333aa/servicio-eureka-server:v1
+    ports:
+      - "8761:8761"
+    restart: always
+    networks:
+      - springcloud
+  servicio-gateway-server:
+    image: 96552333aa/servicio-gateway-server:v1
+    ports:
+      - "8090:8090"
+    restart: always
+    networks:
+      - springcloud
+  microservicios-mysql8:
+    image: mysql:5.7.43
+    ports:
+      - "3306:3306"
+    restart: always
+    networks:
+      - springcloud
+    environment:
+      TZ: America/Santiago
+      MYSQL_DATABASE: db_springboot_cloud
+      MYSQL_ROOT_PASSWORD: sasa
+    volumes:
+      - mysqldata:/var/lib/mysql
+  servicio-productos:
+    image: 96552333aa/servicio-productos:v2
+    ports:
+      - "8001:8001"
+    restart: always
+    networks:
+      - springcloud
+    depends_on:
+      - servicio-eureka-server
+      - microservicios-mysql8
+  ms-concentrador-energia:
+    image: 96552333aa/ms-concentrador-energia:v1
+    ports:
+      - "8002:8002"
+    restart: always
+    networks:
+      - springcloud
+    depends_on:
+      - servicio-eureka-server
+      - microservicios-mysql8
+  servicio-ng-front-vtas:
+    image: 96552333aa/servicio-ng-front-vtas:v1
+    ports:
+      - "80:80"
+    restart: always
+    networks:
+      - springcloud
+    depends_on:
+      - microservicios-mysql8      
+
+networks:
+  springcloud:
+volumes:
+  mysqldata:
