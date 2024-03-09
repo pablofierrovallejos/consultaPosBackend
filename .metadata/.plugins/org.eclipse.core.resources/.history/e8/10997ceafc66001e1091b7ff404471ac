@@ -1,0 +1,5 @@
+package com.pablofierro.energia.controllers;
+
+public class MeasController {
+
+}
